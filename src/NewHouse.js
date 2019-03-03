@@ -9,19 +9,19 @@ class NewHouse extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      whatWeGet: undefined,
-      loanLeft: undefined,
-      derivedCashDeposit: undefined,
-      extraCashDeposit: undefined,
-      totalCashDeposit: undefined,
-      newHouseCost: undefined,
-      newHouseFee: undefined,
-      newLoanAmount: undefined,
-      loanShare: undefined,
-      interest: undefined,
-      amortgage: undefined,
-      monthlyCost: undefined,
-      yearlyCost: undefined
+      whatWeGet: null,
+      loanLeft: null,
+      derivedCashDeposit: null,
+      extraCashDeposit: null,
+      totalCashDeposit: null,
+      newHouseCost: null,
+      newHouseFee: null,
+      newLoanAmount: null,
+      loanShare: null,
+      interest: null,
+      amortgage: null,
+      monthlyCost: null,
+      yearlyCost: null
     }
     this.setFinalCost.bind(this);
 
@@ -34,7 +34,7 @@ class NewHouse extends Component {
       whatWeGet: whatWeGet
     });
     let loanLeft = this.state.loanLeft;
-    if(typeof loanLeft !== "undefined" ) {
+    if(loanLeft) {
       let newCashDeposit = whatWeGet - loanLeft;
       let newCashDepositSpaced = newCashDeposit.toLocaleString();
       this.setState({
@@ -133,23 +133,23 @@ class NewHouse extends Component {
   updateTotalCashDeposit() {
     let derivedCashDeposit = this.state.derivedCashDeposit;
     let extraCashDeposit = this.state.extraCashDeposit;
-    if(typeof derivedCashDeposit !== "undefined" && typeof extraCashDeposit !== "undefined") {
+    if(derivedCashDeposit && extraCashDeposit) {
       let newTotal = derivedCashDeposit + extraCashDeposit;
       this.setState({
         totalCashDeposit: newTotal
       });
     }
-    if(typeof derivedCashDeposit !== "undefined" && typeof extraCashDeposit === "undefined") {
+    if(derivedCashDeposit && !extraCashDeposit) {
       this.setState({
         totalCashDeposit: derivedCashDeposit
       });
     }
-    if(typeof derivedCashDeposit === "undefined" && typeof extraCashDeposit !== "undefined") {
+    if(!derivedCashDeposit && extraCashDeposit) {
       this.setState({
         totalCashDeposit: extraCashDeposit
       });
     }
-    if(typeof derivedCashDeposit === "undefined" && typeof extraCashDeposit === "undefined") {
+    if(!derivedCashDeposit && !extraCashDeposit) {
       this.setState({
         totalCashDeposit: 0
       });
@@ -196,7 +196,7 @@ class NewHouse extends Component {
               </label>
               <label className="inputLabel">
                 <br/>
-                Rak amortering / år
+                Rak amortering / mån
                 <NumberFormat value={this.state.amortgage} onValueChange={this.SetAmortgage.bind(this)} />
               </label>
             </Col>
