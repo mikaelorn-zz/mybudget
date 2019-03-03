@@ -44,3 +44,11 @@
 .formNewHouse{
   width: 17%;
 }
+
+.containerRow {
+  border-style: solid;
+}
+
+.columnRow {
+  border-style: solid;
+}

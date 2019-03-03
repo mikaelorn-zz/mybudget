@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import NumberFormat from 'react-number-format';
+import { Container, Row, Col } from 'react-grid-system';
+import { setConfiguration } from 'react-grid-system';
 
 class NewHouse extends Component {
 
@@ -9,16 +11,21 @@ class NewHouse extends Component {
     this.state = {
       whatWeGet: undefined,
       loanLeft: undefined,
-      cashDepositAvailable: undefined,
+      derivedCashDeposit: undefined,
+      extraCashDeposit: undefined,
+      totalCashDeposit: undefined,
       newHouseCost: undefined,
       newHouseFee: undefined,
       newLoanAmount: undefined,
       loanShare: undefined,
       interest: undefined,
+      amortgage: undefined,
       monthlyCost: undefined,
       yearlyCost: undefined
     }
     this.setFinalCost.bind(this);
+
+    setConfiguration({ gutterWidth: 30 });
   }
 
   setWhatWeGet(val) {
@@ -44,7 +51,7 @@ class NewHouse extends Component {
     let whatWeGet = this.state.whatWeGet;
     let newCashDeposit = whatWeGet - loanLeft;
     this.setState({
-      cashDepositAvailable: newCashDeposit
+      derivedCashDeposit: newCashDeposit
     });
   }
 
@@ -53,10 +60,9 @@ class NewHouse extends Component {
     this.setState({
       newHouseCost: newHouseCost
     });
-    let cashDepositAvailable = this.state.cashDepositAvailable;
-
-    if(newHouseCost > cashDepositAvailable) {
-      let newLoanAmount = newHouseCost - cashDepositAvailable;
+    let totalCashDeposit = this.state.totalCashDeposit;
+    if(newHouseCost > totalCashDeposit) {
+      let newLoanAmount = newHouseCost - totalCashDeposit;
       this.setState({
         newLoanAmount: newLoanAmount
       });
@@ -84,66 +90,145 @@ class NewHouse extends Component {
   }
 
   setFinalCost() {
+
     let newLoanAmount = this.state.newLoanAmount;
     let interest = this.state.interest;
     let fee = this.state.newHouseFee;
+    let amortgage = this.state.amortgage;
+
     if(newLoanAmount > 0 && interest > 0 && fee) {
-      let yearlyCost = Math.round((newLoanAmount * (interest / 100)) + (fee * 12));
-      let monthlyCost = Math.round((yearlyCost / 12) + fee);
+
+      let monthlyInterest = Math.round(newLoanAmount * (interest / 100) / 12);
+      let monthlyCost = Math.round(monthlyInterest + fee + amortgage);
+      let yearlyCost = Math.round(monthlyCost * 12 + (amortgage * 12));
+
       this.setState({
         monthlyCost: monthlyCost,
         yearlyCost: yearlyCost
       });
     }
   }
- 
+
+  setExtraCashDeposit(val) {
+    let extraCashDeposit = val.floatValue;
+    this.setState({
+      extraCashDeposit: extraCashDeposit
+    }, () => {this.updateTotalCashDeposit()});
+  }
+
+  setDerivedCashDeposit(val) {
+    let derivedCashDeposit = val.floatValue;
+    this.setState({
+      derivedCashDeposit: derivedCashDeposit
+    }, () => {this.updateTotalCashDeposit()});
+  }
+
+  SetAmortgage(val) {
+    let amortgage = val.floatValue;
+    this.setState({
+      amortgage: amortgage
+    }, () => {this.setFinalCost()});
+  }
+
+  updateTotalCashDeposit() {
+    let derivedCashDeposit = this.state.derivedCashDeposit;
+    let extraCashDeposit = this.state.extraCashDeposit;
+    if(typeof derivedCashDeposit !== "undefined" && typeof extraCashDeposit !== "undefined") {
+      let newTotal = derivedCashDeposit + extraCashDeposit;
+      this.setState({
+        totalCashDeposit: newTotal
+      });
+    }
+    if(typeof derivedCashDeposit !== "undefined" && typeof extraCashDeposit === "undefined") {
+      this.setState({
+        totalCashDeposit: derivedCashDeposit
+      });
+    }
+    if(typeof derivedCashDeposit === "undefined" && typeof extraCashDeposit !== "undefined") {
+      this.setState({
+        totalCashDeposit: extraCashDeposit
+      });
+    }
+    if(typeof derivedCashDeposit === "undefined" && typeof extraCashDeposit === "undefined") {
+      this.setState({
+        totalCashDeposit: 0
+      });
+    }
+  }
+   
   render() {
     return (
       <div className="NewHouse">
-        <div className="newHouseForm">
-          <form>
+        <Container>
+          <Row className="containerRow">
+            <Col sm={4} className="columnRow">
+              <label className="inputLabel">
+                Vad vi får
+                <NumberFormat thousandSeparator={true} value={this.state.whatWeGet} onValueChange={this.setWhatWeGet.bind(this)} />
+              </label>
+              <label className="inputLabel">
+                Lån kvar
+                <NumberFormat thousandSeparator={true} value={this.state.loanLeft} onValueChange={this.setLoanLeft.bind(this)} />
+              </label>
+              <label className="inputLabel">
+                Ger kontantinsats
+                <NumberFormat readOnly thousandSeparator={true} value={this.state.derivedCashDeposit} onValueChange={this.setDerivedCashDeposit.bind(this)} />
+              </label>
+              <label  className="inputLabel">
+                Extra kontantinsats
+                <NumberFormat thousandSeparator={true} value={this.state.extraCashDeposit} onValueChange={this.setExtraCashDeposit.bind(this)} />
+              </label>
+            </Col>
+            <Col sm={4} className="columnRow">
+              <label className="inputLabel">
+                Nya boendets kostnad
+                <NumberFormat thousandSeparator={true} value={this.state.newHouseCost} onValueChange={this.setNewHouseCost.bind(this)} />
+              </label>
+              <label className="inputLabel">
+                Nya boendets avgift
+                <NumberFormat thousandSeparator={true} value={this.state.newHouseFee} onValueChange={this.setNewHouseFee.bind(this)} />
+              </label>
+            </Col>
+            <Col sm={4} className="columnRow">
+              <label className="inputLabel">
+                Ränta
+                <NumberFormat value={this.state.interest} onValueChange={this.SetInterest.bind(this)} />
+              </label>
+              <label className="inputLabel">
+                <br/>
+                Rak amortering / år
+                <NumberFormat value={this.state.amortgage} onValueChange={this.SetAmortgage.bind(this)} />
+              </label>
+            </Col>
+          </Row>
+          <Row className="containerRow">
+            <Col sm={4} className="columnRow">
             <label className="inputLabel">
-              Vad vi får
-              <NumberFormat thousandSeparator={true} value={this.state.whatWeGet} onValueChange={this.setWhatWeGet.bind(this)} />
+              Total kontantinsats
+              <NumberFormat thousandSeparator={true} value={this.state.totalCashDeposit} />
             </label>
-            <label className="inputLabel">
-              Lån kvar
-              <NumberFormat thousandSeparator={true} value={this.state.loanLeft} onValueChange={this.setLoanLeft.bind(this)} />
-            </label>
-            <label className="inputLabel">
-              Ger kontantinsats
-              <NumberFormat thousandSeparator={true} value={this.state.cashDepositAvailable} />
-            </label>
-            <label className="inputLabel">
-              Nya boendets kostnad
-              <NumberFormat thousandSeparator={true} value={this.state.newHouseCost} onValueChange={this.setNewHouseCost.bind(this)} />
-            </label>
-            <label className="inputLabel">
-              Nya boendets avgift
-              <NumberFormat thousandSeparator={true} value={this.state.newHouseFee} onValueChange={this.setNewHouseFee.bind(this)} />
-            </label>
-            <label className="inputLabel">
-              Nytt lånebelopp
-              <NumberFormat thousandSeparator={true} value={this.state.newLoanAmount} />
-            </label>
-            <label className="inputLabel">
-              Belåningsgrad
-              <input type="number" value={this.state.loanShare}></input>
-            </label>
-            <label className="inputLabel">
-              Ränta
-              <NumberFormat value={this.state.interest} onValueChange={this.SetInterest.bind(this)} />
-            </label>
+            </Col>
+            <Col sm={4} className="columnRow">
+              <label className="inputLabel">
+                Nytt lånebelopp
+                <NumberFormat readOnly thousandSeparator={true} value={this.state.newLoanAmount} />
+              </label>
+            </Col>
+          </Row>
+          <Row className="containerRow">
+            <Col lg={12} className="columnRow">
             <label className="inputLabel">
               Ger månadskostnad
               <input type="number" value={this.state.monthlyCost}></input>
             </label>
+            <br />
             <label className="inputLabel">
               Ger årskostnad
               <input type="number" value={this.state.yearlyCost}></input>
             </label>
-          </form>
-        </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }
