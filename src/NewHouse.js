@@ -174,14 +174,17 @@ class NewHouse extends Component {
                 Vad vi får
                 <NumberFormat thousandSeparator={true} value={this.state.whatWeGet} onValueChange={this.setWhatWeGet.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Lån kvar
                 <NumberFormat thousandSeparator={true} value={this.state.loanLeft} onValueChange={this.setLoanLeft.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Ger kontantinsats
                 <NumberFormat readOnly thousandSeparator={true} value={this.state.derivedCashDeposit} onValueChange={this.setDerivedCashDeposit.bind(this)} />
               </label>
+              <br/>
               <label  className="inputLabel">
                 Extra kontantinsats
                 <NumberFormat thousandSeparator={true} value={this.state.extraCashDeposit} onValueChange={this.setExtraCashDeposit.bind(this)} />
@@ -192,6 +195,7 @@ class NewHouse extends Component {
                 Nya boendets kostnad
                 <NumberFormat thousandSeparator={true} value={this.state.newHouseCost} onValueChange={this.setNewHouseCost.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Nya boendets avgift
                 <NumberFormat thousandSeparator={true} value={this.state.newHouseFee} onValueChange={this.setNewHouseFee.bind(this)} />
