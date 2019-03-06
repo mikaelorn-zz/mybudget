@@ -21,7 +21,10 @@ class NewHouse extends Component {
       interest: null,
       amortgage: null,
       monthlyCost: null,
-      yearlyCost: null
+      yearlyCost: null,
+      monthlyInterest: null,
+      yearlyInterest: null,
+      yearlyFee: null
     }
 
     setConfiguration({ gutterWidth: 30 });
@@ -100,10 +103,15 @@ class NewHouse extends Component {
       let monthlyInterest = Math.round(newLoanAmount * (interest / 100) / 12);
       let monthlyCost = Math.round(monthlyInterest + fee + amortgage);
       let yearlyCost = Math.round(monthlyCost * 12 + (amortgage * 12));
+      let yearlyInterest = monthlyInterest * 12;
+      let yearlyFee = fee  * 12;
 
       this.setState({
         monthlyCost: monthlyCost,
-        yearlyCost: yearlyCost
+        yearlyCost: yearlyCost,
+        monthlyInterest: monthlyInterest,
+        yearlyInterest: yearlyInterest,
+        yearlyFee: yearlyFee
       });
     }
   }
@@ -228,6 +236,21 @@ class NewHouse extends Component {
             <label className="inputLabel">
               Ger årskostnad
               <input type="number" value={this.state.yearlyCost}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Ränta / mån
+              <input type="number" value={this.state.monthlyInterest}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Ränta / år
+              <input type="number" value={this.state.yearlyInterest}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Avgift / år
+              <input type="number" value={this.state.yearlyFee}></input>
             </label>
             </Col>
           </Row>
