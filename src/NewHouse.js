@@ -23,7 +23,6 @@ class NewHouse extends Component {
       monthlyCost: null,
       yearlyCost: null
     }
-    this.setFinalCost.bind(this);
 
     setConfiguration({ gutterWidth: 30 });
   }
@@ -36,9 +35,9 @@ class NewHouse extends Component {
     let loanLeft = this.state.loanLeft;
     if(loanLeft) {
       let newCashDeposit = whatWeGet - loanLeft;
-      let newCashDepositSpaced = newCashDeposit.toLocaleString();
+      //let newCashDepositSpaced = newCashDeposit.toLocaleString();
       this.setState({
-        cashDepositAvailable: newCashDepositSpaced
+        cashDepositAvailable: newCashDeposit
       });
     }
   }
@@ -78,7 +77,7 @@ class NewHouse extends Component {
     let newHouseFee = val.floatValue;
     this.setState({
       newHouseFee: newHouseFee
-    }, () => {this.setFinalCost()});
+    });
 
   }
 
@@ -86,10 +85,10 @@ class NewHouse extends Component {
     let interest = val.floatValue;
     this.setState({
       interest: interest
-    }, () => {this.setFinalCost()});
+    });
   }
 
-  setFinalCost() {
+  Calculate() {
 
     let newLoanAmount = this.state.newLoanAmount;
     let interest = this.state.interest;
@@ -127,12 +126,13 @@ class NewHouse extends Component {
     let amortgage = val.floatValue;
     this.setState({
       amortgage: amortgage
-    }, () => {this.setFinalCost()});
+    });
   }
 
   updateTotalCashDeposit() {
     let derivedCashDeposit = this.state.derivedCashDeposit;
     let extraCashDeposit = this.state.extraCashDeposit;
+
     if(derivedCashDeposit && extraCashDeposit) {
       let newTotal = derivedCashDeposit + extraCashDeposit;
       this.setState({
@@ -213,6 +213,9 @@ class NewHouse extends Component {
                 Nytt lånebelopp
                 <NumberFormat readOnly thousandSeparator={true} value={this.state.newLoanAmount} />
               </label>
+            </Col>
+            <Col sm={4}>
+              <button onClick={this.Calculate.bind(this)}>Beräkna</button>
             </Col>
           </Row>
           <Row className="containerRow">
