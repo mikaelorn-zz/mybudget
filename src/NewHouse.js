@@ -21,9 +21,11 @@ class NewHouse extends Component {
       interest: null,
       amortgage: null,
       monthlyCost: null,
-      yearlyCost: null
+      yearlyCost: null,
+      monthlyInterest: null,
+      yearlyInterest: null,
+      yearlyFee: null
     }
-    this.setFinalCost.bind(this);
 
     setConfiguration({ gutterWidth: 30 });
   }
@@ -36,9 +38,9 @@ class NewHouse extends Component {
     let loanLeft = this.state.loanLeft;
     if(loanLeft) {
       let newCashDeposit = whatWeGet - loanLeft;
-      let newCashDepositSpaced = newCashDeposit.toLocaleString();
+      //let newCashDepositSpaced = newCashDeposit.toLocaleString();
       this.setState({
-        cashDepositAvailable: newCashDepositSpaced
+        cashDepositAvailable: newCashDeposit
       });
     }
   }
@@ -78,7 +80,7 @@ class NewHouse extends Component {
     let newHouseFee = val.floatValue;
     this.setState({
       newHouseFee: newHouseFee
-    }, () => {this.setFinalCost()});
+    });
 
   }
 
@@ -86,10 +88,10 @@ class NewHouse extends Component {
     let interest = val.floatValue;
     this.setState({
       interest: interest
-    }, () => {this.setFinalCost()});
+    });
   }
 
-  setFinalCost() {
+  Calculate() {
 
     let newLoanAmount = this.state.newLoanAmount;
     let interest = this.state.interest;
@@ -101,10 +103,15 @@ class NewHouse extends Component {
       let monthlyInterest = Math.round(newLoanAmount * (interest / 100) / 12);
       let monthlyCost = Math.round(monthlyInterest + fee + amortgage);
       let yearlyCost = Math.round(monthlyCost * 12 + (amortgage * 12));
+      let yearlyInterest = monthlyInterest * 12;
+      let yearlyFee = fee  * 12;
 
       this.setState({
         monthlyCost: monthlyCost,
-        yearlyCost: yearlyCost
+        yearlyCost: yearlyCost,
+        monthlyInterest: monthlyInterest,
+        yearlyInterest: yearlyInterest,
+        yearlyFee: yearlyFee
       });
     }
   }
@@ -127,12 +134,13 @@ class NewHouse extends Component {
     let amortgage = val.floatValue;
     this.setState({
       amortgage: amortgage
-    }, () => {this.setFinalCost()});
+    });
   }
 
   updateTotalCashDeposit() {
     let derivedCashDeposit = this.state.derivedCashDeposit;
     let extraCashDeposit = this.state.extraCashDeposit;
+
     if(derivedCashDeposit && extraCashDeposit) {
       let newTotal = derivedCashDeposit + extraCashDeposit;
       this.setState({
@@ -166,14 +174,17 @@ class NewHouse extends Component {
                 Vad vi får
                 <NumberFormat thousandSeparator={true} value={this.state.whatWeGet} onValueChange={this.setWhatWeGet.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Lån kvar
                 <NumberFormat thousandSeparator={true} value={this.state.loanLeft} onValueChange={this.setLoanLeft.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Ger kontantinsats
                 <NumberFormat readOnly thousandSeparator={true} value={this.state.derivedCashDeposit} onValueChange={this.setDerivedCashDeposit.bind(this)} />
               </label>
+              <br/>
               <label  className="inputLabel">
                 Extra kontantinsats
                 <NumberFormat thousandSeparator={true} value={this.state.extraCashDeposit} onValueChange={this.setExtraCashDeposit.bind(this)} />
@@ -184,6 +195,7 @@ class NewHouse extends Component {
                 Nya boendets kostnad
                 <NumberFormat thousandSeparator={true} value={this.state.newHouseCost} onValueChange={this.setNewHouseCost.bind(this)} />
               </label>
+              <br/>
               <label className="inputLabel">
                 Nya boendets avgift
                 <NumberFormat thousandSeparator={true} value={this.state.newHouseFee} onValueChange={this.setNewHouseFee.bind(this)} />
@@ -214,6 +226,9 @@ class NewHouse extends Component {
                 <NumberFormat readOnly thousandSeparator={true} value={this.state.newLoanAmount} />
               </label>
             </Col>
+            <Col sm={4}>
+              <button onClick={this.Calculate.bind(this)}>Beräkna</button>
+            </Col>
           </Row>
           <Row className="containerRow">
             <Col lg={12} className="columnRow">
@@ -225,6 +240,21 @@ class NewHouse extends Component {
             <label className="inputLabel">
               Ger årskostnad
               <input type="number" value={this.state.yearlyCost}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Ränta / mån
+              <input type="number" value={this.state.monthlyInterest}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Ränta / år
+              <input type="number" value={this.state.yearlyInterest}></input>
+            </label>
+            <br />
+            <label className="inputLabel">
+              Avgift / år
+              <input type="number" value={this.state.yearlyFee}></input>
             </label>
             </Col>
           </Row>

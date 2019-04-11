@@ -7,7 +7,7 @@
     "react-dom": "^16.8.3",
     "react-grid-system": "^4.4.2",
     "react-number-format": "^4.0.6",
-    "react-scripts": "2.1.5"
+    "react-scripts": "^2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
